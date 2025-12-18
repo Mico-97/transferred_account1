@@ -50,8 +50,8 @@ async function cacheFileOnChange(event) {
     showUploadBuffer();
 
     // 10MB Limit
-    if (file.size > 10 * 1024 * 1024) {
-        alert("File size must not exceed 10MB.");
+    if (file.size > 20 * 1024 * 1024) {
+        alert("File size must not exceed 20MB.");
         fileInput.value = "";
         cachedFile = null;
         setTimeout(hideUploadBuffer, 500);
