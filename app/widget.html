@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <div class="field-group">
+      <div class="field-group hidden" id="reason-container">
         <label class="field-label">Reason</label>
         <div class="select-wrapper">
           <select id="reason" name="reason">
@@ -35,15 +35,35 @@
         </div>
       </div>
 
-      <div class="field-group">
+      <div class="field-group hidden" id="agent-container">
         <label class="field-label">Competitor / Agent Name</label>
         <input type="text" id="agent_name" name="agent_name" placeholder="Enter Competitor/Agent Name">
       </div>
 
-      <div class="button-container">
+      <div class="field-group hidden" id="upload-container">
+        <label class="field-label">
+          Upload TLZ NOC document <span style="color: red;">*</span>
+          <span title="Drag and drop your file here." style="cursor: help; color: #9ca3af; margin-left: 4px;">&#9432;</span>
+        </label>
+        <input type="file" id="tlz-noc-document" name="tlz-noc-document" accept=".pdf,.jpg,.jpeg,.png">
+      </div>
+
+      <div class="button-container hidden" id="submit-container">
         <button type="button" id="submit_btn" class="submit-button">Submit</button>
       </div>
 
+    </div>
+  </div>
+
+  <div id="upload-buffer" class="upload-overlay hidden" aria-live="polite" role="status">
+    <div class="upload-box">
+      <div class="upload-icon">&#128228;</div>
+      <div class="upload-title">Processing your file...</div>
+      <div class="progress-wrapper">
+        <div class="progress-bar-background">
+          <div id="upload-progress" class="progress-bar-fill animate"></div>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -47,7 +47,7 @@ input[type="text"] {
   color: #333333;
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 8px; /* Softer corners */
+  border-radius: 8px;
   box-sizing: border-box;
   transition: all 0.2s ease;
 }
@@ -68,7 +68,7 @@ input[type="text"]:focus {
 }
 
 .submit-button {
-  width: 70%; 
+  width: 40%; 
   padding: 14px;
   font-size: 15px;
   font-weight: 600;
@@ -91,4 +91,100 @@ input[type="text"]:focus {
 
 .hidden {
   display: none !important;
+}
+
+
+
+/* Uniform File Input Styling */
+input[type="file"] {
+    width: 100%;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: #374151;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+/* Optional: Style the "Choose File" button inside the input */
+input[type="file"]::file-selector-button {
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background-color: #e5e7eb;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 11px;
+    margin-top: 4px;
+    display: block;
+}
+
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* UPLOAD BUFFER OVERLAY */
+.upload-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-box {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  width: 300px;
+}
+
+.upload-icon {
+  font-size: 40px;
+  margin-bottom: 15px;
+  color: #4347fb;
+}
+
+.upload-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: #374151;
+}
+
+.progress-bar-background {
+  width: 100%;
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-fill.animate {
+  height: 100%;
+  background: linear-gradient(90deg, #4347fb, #3639ca);
+  width: 0%;
+  animation: fillAnimation 2.2s ease-in-out forwards;
+}
+
+@keyframes fillAnimation {
+  from { width: 0%; }
+  to { width: 100%; }
 }
