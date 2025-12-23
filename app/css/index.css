@@ -7,7 +7,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 75vh;
+  min-height: 55vh;
 }
 
 /* The Card Style */
@@ -53,8 +53,9 @@ input[type="text"] {
 }
 
 /* Blue Halo on Focus */
-select:focus, 
-input[type="text"]:focus {
+select:focus,
+input[type="text"]:focus,
+textarea.form-control:focus {
   border-color: #4a90e2;
   box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.15);
   outline: none;
@@ -187,4 +188,20 @@ input[type="file"]::file-selector-button:hover {
 @keyframes fillAnimation {
   from { width: 0%; }
   to { width: 100%; }
+}
+
+
+/* Textarea styling - same as inputs */
+textarea.form-control {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #333333;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-sizing: border-box;
+  resize: vertical;
+  transition: all 0.2s ease;
+  font-family: 'Inter', Arial, sans-serif;
 }

@@ -9,33 +9,85 @@ function updateSubmitButtonVisibility() {
     const transferType = document.getElementById('account_type').value;
     const reason = document.getElementById('reason').value;
     const competitorName = document.getElementById('agent_name').value.trim();
+    const remarks = document.getElementById('remarks').value.trim();
+
     const submitBtnContainer = document.getElementById('submit-container');
     const uploadGroup = document.getElementById('upload-container');
+    const remarksGroup = document.getElementById('remarks-container');
 
     submitBtnContainer.classList.add('hidden');
+    uploadGroup.classList.add('hidden');
+    remarksGroup.classList.add('hidden');
 
     if (transferType === "Transferred to Authority") {
         if (reason === "Client's Request") {
+            remarksGroup.classList.remove('hidden');
             uploadGroup.classList.remove('hidden');
-            if (cachedFile !== null) submitBtnContainer.classList.remove('hidden');
-        } else if (reason !== "" && reason !== null) {
-            uploadGroup.classList.add('hidden');
+
+            if (remarks !== "" && cachedFile !== null) {
+                submitBtnContainer.classList.remove('hidden');
+            }
+        }
+        else if (reason) {
             submitBtnContainer.classList.remove('hidden');
         }
-    } 
+    }
     else if (transferType === "Transferred to Competitor") {
         if (competitorName !== "") {
             uploadGroup.classList.remove('hidden');
             if (cachedFile !== null) submitBtnContainer.classList.remove('hidden');
-        } else {
-            uploadGroup.classList.add('hidden');
         }
     }
     else if (transferType && transferType.includes("Warning")) {
-        uploadGroup.classList.add('hidden');
         submitBtnContainer.classList.remove('hidden');
     }
 }
+
+function validateBeforeSubmit() {
+    const transferType = document.getElementById('account_type').value;
+    const reason = document.getElementById('reason').value;
+    const competitorName = document.getElementById('agent_name').value.trim();
+    const remarks = document.getElementById('remarks').value.trim();
+
+    if (!transferType) {
+        alert("Account Type should not be empty.");
+        return false;
+    }
+
+    if (transferType === "Transferred to Authority") {
+        if (!reason) {
+            alert("Reason should not be empty.");
+            return false;
+        }
+
+        if (reason === "Client's Request") {
+            if (!remarks) {
+                alert("Transfer Reason should not be empty.");
+                return false;
+            }
+
+            if (!cachedFile) {
+                alert("TLZ NOC document is required.");
+                return false;
+            }
+        }
+    }
+
+    if (transferType === "Transferred to Competitor") {
+        if (!competitorName) {
+            alert("Competitor / Agent Name should not be empty.");
+            return false;
+        }
+
+        if (!cachedFile) {
+            alert("TLZ NOC document is required.");
+            return false;
+        }
+    }
+
+    return true;
+}
+
 
 async function cacheFileOnChange(event) {
     const fileInput = event.target;
@@ -49,7 +101,7 @@ async function cacheFileOnChange(event) {
 
     showUploadBuffer();
 
-    // 10MB Limit
+    // 20MB Limit
     if (file.size > 20 * 1024 * 1024) {
         alert("File size must not exceed 20MB.");
         fileInput.value = "";
@@ -75,27 +127,40 @@ ZOHO.embeddedApp.init().then(() => {
     const fileInput = document.getElementById('tlz-noc-document');
     const agentInput = document.getElementById('agent_name');
     const submitBtn = document.getElementById('submit_btn');
+    const remarks = document.getElementById('remarks');
 
     accountTypeSelect.addEventListener('change', () => {
         document.getElementById('reason-container').classList.add('hidden');
         document.getElementById('upload-container').classList.add('hidden');
         document.getElementById('agent-container').classList.add('hidden');
-        
+        document.getElementById('remarks-container').classList.add('hidden');
+
         reasonSelect.value = "";
         fileInput.value = "";
         agentInput.value = "";
+        remarks.value = "";
         cachedFile = null;
 
-        if (accountTypeSelect.value === "Transferred to Authority") document.getElementById('reason-container').classList.remove('hidden');
-        if (accountTypeSelect.value === "Transferred to Competitor") document.getElementById('agent-container').classList.remove('hidden');
+        if (accountTypeSelect.value === "Transferred to Authority")
+            document.getElementById('reason-container').classList.remove('hidden');
+
+        if (accountTypeSelect.value === "Transferred to Competitor")
+            document.getElementById('agent-container').classList.remove('hidden');
+
         updateSubmitButtonVisibility();
     });
 
     reasonSelect.addEventListener('change', updateSubmitButtonVisibility);
     agentInput.addEventListener('input', updateSubmitButtonVisibility);
     fileInput.addEventListener('change', cacheFileOnChange);
+    remarks.addEventListener('input', updateSubmitButtonVisibility);
 
     submitBtn.addEventListener('click', async () => {
+
+        if (!validateBeforeSubmit()) {
+            return;
+        }
+
         submitBtn.disabled = true;
         submitBtn.innerText = "Processing...";
         
@@ -126,7 +191,8 @@ ZOHO.embeddedApp.init().then(() => {
                 "id": entity_id,
                 "Transfer_Type": accountTypeSelect.value,
                 "Transferred_to_Authority_Reason": reasonSelect.value,
-                "Competitor_Agent_Name": agentInput.value
+                "Competitor_Agent_Name": agentInput.value,
+                "Transfer_Reason": remarks.value
             };
 
             // 3. Link the ID to the specific field name
