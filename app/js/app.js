@@ -202,10 +202,22 @@ ZOHO.embeddedApp.init().then(() => {
             }
 
             // 4. Final Record Update
-            await ZOHO.CRM.API.updateRecord({
+            var config1 = {
                 Entity: "Accounts",
-                APIData: updatePayload
+                APIData: updatePayload,
+                Trigger: ["workflow"]
+            };
+
+            ZOHO.CRM.API.updateRecord(config1)
+            .then(function () {
+                alert("You have successfully transferred the account!");
+                ZOHO.CRM.UI.Popup.closeReload();
+            })
+            .catch(function (error) {
+                console.error(error);
             });
+
+            alert("You have successfully transferred the account!");
 
             ZOHO.CRM.UI.Popup.closeReload();
             
