@@ -1,233 +1,165 @@
 let entity_id;
 let cachedFile = null;
 
-function showUploadBuffer() { document.getElementById('upload-buffer').classList.remove('hidden'); }
-function hideUploadBuffer() { document.getElementById('upload-buffer').classList.add('hidden'); }
+function showModal(title, message, isSuccess = true) {
+    const modal = document.getElementById('notification-modal');
+    const titleEl = document.getElementById('modal-title');
+    const msgEl = document.getElementById('modal-message');
+    const closeBtn = document.getElementById('modal-close-btn');
 
+    titleEl.innerText = title;
+    titleEl.className = `text-xl font-bold mb-3 ${isSuccess ? 'text-green-600' : 'text-red-600'}`;
+    msgEl.innerText = message;
 
-function updateSubmitButtonVisibility() {
-    const transferType = document.getElementById('account_type').value;
+    modal.classList.remove('hidden');
+    setTimeout(() => modal.classList.add('show'), 10);
+
+    closeBtn.onclick = () => {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            if (isSuccess) ZOHO.CRM.UI.Popup.closeReload();
+        }, 300);
+    };
+}
+
+function updateUI() {
+    const type = document.getElementById('account_type').value;
     const reason = document.getElementById('reason').value;
-    const competitorName = document.getElementById('agent_name').value.trim();
-    const remarks = document.getElementById('remarks').value.trim();
+    const agent = document.getElementById('agent_name').value.trim();
+    const rems = document.getElementById('remarks').value.trim();
 
-    const submitBtnContainer = document.getElementById('submit-container');
-    const uploadGroup = document.getElementById('upload-container');
-    const remarksGroup = document.getElementById('remarks-container');
+    const containers = {
+        submit: document.getElementById('submit-container'),
+        upload: document.getElementById('upload-container'),
+        remarks: document.getElementById('remarks-container'),
+        reason: document.getElementById('reason-container'),
+        agent: document.getElementById('agent-container')
+    };
 
-    submitBtnContainer.classList.add('hidden');
-    uploadGroup.classList.add('hidden');
-    remarksGroup.classList.add('hidden');
+    Object.values(containers).forEach(c => c.classList.add('hidden'));
 
-    if (transferType === "Transferred to Authority") {
+    if (type === "Transferred to Authority") {
+        containers.reason.classList.remove('hidden');
         if (reason === "Client's Request") {
-            remarksGroup.classList.remove('hidden');
-            uploadGroup.classList.remove('hidden');
-
-            if (remarks !== "" && cachedFile !== null) {
-                submitBtnContainer.classList.remove('hidden');
-            }
+            containers.remarks.classList.remove('hidden');
+            containers.upload.classList.remove('hidden');
+            if (rems !== "" && cachedFile !== null) containers.submit.classList.remove('hidden');
+        } else if (reason) {
+            containers.submit.classList.remove('hidden');
         }
-        else if (reason) {
-            submitBtnContainer.classList.remove('hidden');
+    } else if (type === "Transferred to Competitor") {
+        containers.agent.classList.remove('hidden');
+        if (agent !== "") {
+            containers.upload.classList.remove('hidden');
+            if (cachedFile !== null) containers.submit.classList.remove('hidden');
         }
-    }
-    else if (transferType === "Transferred to Competitor") {
-        if (competitorName !== "") {
-            uploadGroup.classList.remove('hidden');
-            if (cachedFile !== null) submitBtnContainer.classList.remove('hidden');
-        }
-    }
-    else if (transferType && transferType.includes("Warning")) {
-        submitBtnContainer.classList.remove('hidden');
+    } else if (type && type.includes("Warning")) {
+        containers.submit.classList.remove('hidden');
     }
 }
 
-function validateBeforeSubmit() {
-    const transferType = document.getElementById('account_type').value;
-    const reason = document.getElementById('reason').value;
-    const competitorName = document.getElementById('agent_name').value.trim();
-    const remarks = document.getElementById('remarks').value.trim();
-
-    if (!transferType) {
-        alert("Account Type should not be empty.");
-        return false;
-    }
-
-    if (transferType === "Transferred to Authority") {
-        if (!reason) {
-            alert("Reason should not be empty.");
-            return false;
-        }
-
-        if (reason === "Client's Request") {
-            if (!remarks) {
-                alert("Transfer Reason should not be empty.");
-                return false;
-            }
-
-            if (!cachedFile) {
-                alert("TLZ NOC document is required.");
-                return false;
-            }
-        }
-    }
-
-    if (transferType === "Transferred to Competitor") {
-        if (!competitorName) {
-            alert("Competitor / Agent Name should not be empty.");
-            return false;
-        }
-
-        if (!cachedFile) {
-            alert("TLZ NOC document is required.");
-            return false;
-        }
-    }
-
-    return true;
-}
-
-
-async function cacheFileOnChange(event) {
-    const fileInput = event.target;
-    const file = fileInput?.files[0];
-    
+async function handleFile(e) {
+    const file = e.target.files[0];
     if (!file) {
         cachedFile = null;
-        updateSubmitButtonVisibility();
+        updateUI();
         return;
     }
 
-    showUploadBuffer();
-
-    // 20MB Limit
     if (file.size > 20 * 1024 * 1024) {
-        alert("File size must not exceed 20MB.");
-        fileInput.value = "";
+        showModal('Error', 'File size must not exceed 20MB.', false);
+        e.target.value = "";
         cachedFile = null;
-        setTimeout(hideUploadBuffer, 500);
         return;
     }
 
     cachedFile = file;
-
-    await new Promise((res) => setTimeout(res, 2200)); 
-    hideUploadBuffer();
-    updateSubmitButtonVisibility();
+    const fileNameDisplay = document.getElementById('file-name-display');
+    if (fileNameDisplay) fileNameDisplay.innerText = `Selected: ${file.name}`;
+    updateUI();
 }
 
-ZOHO.embeddedApp.on("PageLoad", async (entity) => {
-    entity_id = entity.EntityId[0];
+ZOHO.embeddedApp.on("PageLoad", (e) => { 
+    entity_id = e.EntityId[0]; 
 });
 
 ZOHO.embeddedApp.init().then(() => {
-    const accountTypeSelect = document.getElementById('account_type');
-    const reasonSelect = document.getElementById('reason');
-    const fileInput = document.getElementById('tlz-noc-document');
-    const agentInput = document.getElementById('agent_name');
-    const submitBtn = document.getElementById('submit_btn');
-    const remarks = document.getElementById('remarks');
-
-    accountTypeSelect.addEventListener('change', () => {
-        document.getElementById('reason-container').classList.add('hidden');
-        document.getElementById('upload-container').classList.add('hidden');
-        document.getElementById('agent-container').classList.add('hidden');
-        document.getElementById('remarks-container').classList.add('hidden');
-
-        reasonSelect.value = "";
-        fileInput.value = "";
-        agentInput.value = "";
-        remarks.value = "";
-        cachedFile = null;
-
-        if (accountTypeSelect.value === "Transferred to Authority")
-            document.getElementById('reason-container').classList.remove('hidden');
-
-        if (accountTypeSelect.value === "Transferred to Competitor")
-            document.getElementById('agent-container').classList.remove('hidden');
-
-        updateSubmitButtonVisibility();
+    const inputs = ['account_type', 'reason', 'agent_name', 'remarks'];
+    inputs.forEach(id => {
+        document.getElementById(id).addEventListener('input', updateUI);
     });
 
-    reasonSelect.addEventListener('change', updateSubmitButtonVisibility);
-    agentInput.addEventListener('input', updateSubmitButtonVisibility);
-    fileInput.addEventListener('change', cacheFileOnChange);
-    remarks.addEventListener('input', updateSubmitButtonVisibility);
+    document.getElementById('tlz-noc-document').addEventListener('change', handleFile);
 
-    submitBtn.addEventListener('click', async () => {
-
-        if (!validateBeforeSubmit()) {
-            return;
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Processing...";
+    document.getElementById('submit_btn').addEventListener('click', async function() {
+        const btnText = document.getElementById('button-text');
+        const spinner = document.getElementById('loading-spinner');
+        const selectedType = document.getElementById('account_type').value;
         
-        try {
-            let uploadedFileId = null;
+        this.disabled = true;
+        btnText.innerText = "Processing...";
+        spinner.classList.remove('hidden');
 
-            // 1. Upload File to Zoho to get the ID (Required for File Upload fields)
+        try {
+            let fileId = null;
+
             if (cachedFile) {
                 const config = {
                     "CONTENT_TYPE": "multipart",
-                    "PARTS": [{
-                        "headers": { "Content-Disposition": "file;" },
-                        "content": "__FILE__"
-                    }],
-                    "FILE": {
-                        "fileParam": "content",
-                        "file": cachedFile
-                    }
+                    "PARTS": [{ "headers": { "Content-Disposition": "file;" }, "content": "__FILE__" }],
+                    "FILE": { "fileParam": "content", "file": cachedFile }
                 };
-
-                const uploadResponse = await ZOHO.CRM.API.uploadFile(config);
-                // Extracting the ID from the response details
-                uploadedFileId = uploadResponse.data[0].details.id;
+                const resp = await ZOHO.CRM.API.uploadFile(config);
+                fileId = resp.data[0].details.id;
             }
 
-            // 2. Prepare Data for record update
-            const updatePayload = {
-                "id": entity_id,
-                "Transfer_Type": accountTypeSelect.value,
-                "Transferred_to_Authority_Reason": reasonSelect.value,
-                "Competitor_Agent_Name": agentInput.value,
-                "Transfer_Reason": remarks.value
+            const func_data = {
+                "arguments": JSON.stringify({
+                    "account_id": entity_id,
+                    "transfer_type": selectedType,
+                    "transferred_to_auth_reason": document.getElementById('reason').value,
+                    "competitor_agent_name": document.getElementById('agent_name').value,
+                    "transfer_reason": document.getElementById('remarks').value
+                })
             };
+            await ZOHO.CRM.FUNCTIONS.execute("transfer_account_and_reminder", func_data);
 
-            // 3. Link the ID to the specific field name
-            if (uploadedFileId) {
-                // IMPORTANT: File fields in Zoho must be an array of IDs [id1, id2]
-                updatePayload["TLZ_NOC_document"] = [uploadedFileId];
+            if (fileId) {
+                await ZOHO.CRM.API.updateRecord({
+                    Entity: "Accounts",
+                    APIData: { "id": entity_id, "TLZ_NOC_document": [fileId] },
+                    Trigger: ["workflow"]
+                });
             }
 
-            // 4. Final Record Update
-            var config1 = {
-                Entity: "Accounts",
-                APIData: updatePayload,
-                Trigger: ["workflow"]
-            };
-
-            ZOHO.CRM.API.updateRecord(config1)
-            .then(function () {
-                alert("You have successfully transferred the account!");
-                ZOHO.CRM.UI.Popup.closeReload();
-            })
-            .catch(function (error) {
-                console.error(error);
-            });
-
-            alert("You have successfully transferred the account!");
-
-            ZOHO.CRM.UI.Popup.closeReload();
+            // --- Custom Success Messages for all Account Types ---
+            let successMessage = "";
             
-        } catch (error) {
-            console.error("Submission Error: ", error);
-            alert("Error updating record. Please check the console.");
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Submit Update";
+            switch (selectedType) {
+                case "Send First Warning":
+                    successMessage = "The Send First Warning email has been successfully triggered.";
+                    break;
+                case "Send Final Warning":
+                    successMessage = "The Send Final Warning email has been successfully triggered.";
+                    break;
+                case "Transferred to Authority":
+                    successMessage = "The account has been successfully transferred to the Authority.";
+                    break;
+                case "Transferred to Competitor":
+                    successMessage = "The account has been successfully transferred to a Competitor.";
+                    break;
+                default:
+                    successMessage = "The account update has been processed successfully.";
+            }
+
+            showModal('Success', successMessage, true);
+
+        } catch (err) {
+            showModal('Error', 'Failed to update record. Please check your connection.', false);
+            this.disabled = false;
+            btnText.innerText = "Confirm Transfer";
+            spinner.classList.add('hidden');
         }
     });
 });
-
-ZOHO.embeddedApp.init();

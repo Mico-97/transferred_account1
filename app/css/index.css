@@ -1,102 +1,101 @@
-/* General Layout */
 body {
-  background-color: #f3f4f6; 
-  font-family: 'Inter', Arial, sans-serif !important;
-  margin: 0;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 55vh;
+    background-color: #f3f4f6; 
+    font-family: 'Inter', Arial, sans-serif !important;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 55vh;
 }
 
-/* The Card Style */
 .card {
-  background-color: #ffffff;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  max-width: 450px;
+    background-color: #ffffff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 450px;
 }
 
 .main-wrapper {
-  width: 100%;
+    width: 100%;
 }
 
 .field-group {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
-/* Branded Labels */
 .field-label {
-  display: block;
-  color: #374151;
-  font-size: 13px;
-  margin-bottom: 6px;
-  letter-spacing: 0.5px;
-  font-weight: 500;
+    display: block;
+    color: #374151;
+    font-size: 13px;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    font-weight: 500;
 }
 
-/* Input Styling */
 select, 
-input[type="text"] {
-  width: 100%;
-  padding: 12px 14px;
-  font-size: 12px;
-  color: #333333;
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-sizing: border-box;
-  transition: all 0.2s ease;
+input[type="text"],
+textarea.form-control {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #333333;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
 }
 
-/* Blue Halo on Focus */
 select:focus,
 input[type="text"]:focus,
 textarea.form-control:focus {
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.15);
-  outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+    outline: none;
 }
 
-/* Button centered in card */
 .button-container {
-  margin-top: 24px;
-  display: flex;
-  justify-content: center;
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
 }
 
 .submit-button {
-  width: 40%; 
-  padding: 14px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #ffffff;
-  background-color: #4347fb;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: transform 0.1s, background-color 0.2s;
+    width: 100%; 
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #4f46e5;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .submit-button:hover {
-  background-color: #3639ca;
+    background-color: #4338ca;
 }
 
 .submit-button:active {
-  transform: scale(0.98);
+    transform: scale(0.98);
 }
 
+.submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 
 .hidden {
-  display: none !important;
+    display: none !important;
 }
 
-
-
-/* Uniform File Input Styling */
 input[type="file"] {
     width: 100%;
     padding: 8px 14px;
@@ -109,7 +108,6 @@ input[type="file"] {
     cursor: pointer;
 }
 
-/* Optional: Style the "Choose File" button inside the input */
 input[type="file"]::file-selector-button {
     background-color: #f3f4f6;
     color: #374151;
@@ -121,10 +119,6 @@ input[type="file"]::file-selector-button {
     font-weight: 500;
 }
 
-input[type="file"]::file-selector-button:hover {
-    background-color: #e5e7eb;
-}
-
 .error-message {
     color: #ef4444;
     font-size: 11px;
@@ -132,76 +126,62 @@ input[type="file"]::file-selector-button:hover {
     display: block;
 }
 
-.select-wrapper {
-  position: relative;
-  width: 100%;
+#notification-modal {
+    transition: opacity 0.3s ease;
 }
 
-/* UPLOAD BUFFER OVERLAY */
+#notification-modal.show {
+    opacity: 1;
+}
+
+#notification-modal.show > div {
+    transform: scale(1);
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .upload-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .upload-box {
-  background: #fff;
-  padding: 30px 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  width: 300px;
-}
-
-.upload-icon {
-  font-size: 40px;
-  margin-bottom: 15px;
-  color: #4347fb;
-}
-
-.upload-title {
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 20px;
-  color: #374151;
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 300px;
 }
 
 .progress-bar-background {
-  width: 100%;
-  height: 8px;
-  background: #f3f4f6;
-  border-radius: 5px;
-  overflow: hidden;
+    width: 100%;
+    height: 8px;
+    background: #f3f4f6;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
 .progress-bar-fill.animate {
-  height: 100%;
-  background: linear-gradient(90deg, #4347fb, #3639ca);
-  width: 0%;
-  animation: fillAnimation 2.2s ease-in-out forwards;
+    height: 100%;
+    background: linear-gradient(90deg, #4f46e5, #4338ca);
+    width: 0%;
+    animation: fillAnimation 2.2s ease-in-out forwards;
 }
 
 @keyframes fillAnimation {
-  from { width: 0%; }
-  to { width: 100%; }
-}
-
-
-/* Textarea styling - same as inputs */
-textarea.form-control {
-  width: 100%;
-  padding: 12px 14px;
-  font-size: 12px;
-  color: #333333;
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-sizing: border-box;
-  resize: vertical;
-  transition: all 0.2s ease;
-  font-family: 'Inter', Arial, sans-serif;
+    from { width: 0%; }
+    to { width: 100%; }
 }

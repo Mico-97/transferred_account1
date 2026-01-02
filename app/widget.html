@@ -1,77 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Transferred Account Form</title>
-  <link rel="stylesheet" type="text/css" href="css/index.css">
-  <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Transfer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
-<body>
+<body class="bg-gray-50 p-4 flex justify-center">
 
-  <div class="card">
-    <div class="main-wrapper">
-      
-      <div class="field-group">
-        <label class="field-label">Account Type <span style="color: red;">*</span></label>
-        <div class="select-wrapper">
-          <select id="account_type" name="account_type">
-            <option value="" disabled selected>Select Account Type</option>
-            <option value="Transferred to Authority">Transferred to Authority</option>
-            <option value="Transferred to Competitor">Transferred to Competitor</option>
-            <option value="Send First Warning">Send First Warning</option>
-            <option value="Send Final Warning">Send Final Warning</option>
-          </select>
-        </div>
-      </div>
+    <div class="w-full max-w-2xl bg-white shadow-xl rounded-xl p-4 sm:p-6">
+        <h1 class="text-xl font-extrabold text-indigo-700 mb-4 border-b pb-2">
+            Transfer Account Settings
+        </h1>
 
-      <div class="field-group hidden" id="reason-container">
-        <label class="field-label">Reason <span style="color: red;">*</span></label>
-        <div class="select-wrapper">
-          <select id="reason" name="reason">
-            <option value="" disabled selected>Select Reason</option>
-            <option value="Non Action License">Non Action License</option>
-            <option value="Client's Request">Client's Request</option>
-          </select>
-        </div>
-      </div>
+        <form id="transfer-form" novalidate>
+            <div class="space-y-4">
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Account Type <span class="text-red-500">*</span></label>
+                    <select id="account_type" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        <option value="" disabled selected>Select Account Type</option>
+                        <option value="Transferred to Authority">Transferred to Authority</option>
+                        <option value="Transferred to Competitor">Transferred to Competitor</option>
+                        <option value="Send First Warning">Send First Warning</option>
+                        <option value="Send Final Warning">Send Final Warning</option>
+                    </select>
+                </div>
 
-      <div class="field-group hidden" id="agent-container">
-        <label class="field-label">Competitor / Agent Name</label>
-        <input type="text" id="agent_name" name="agent_name" placeholder="Enter Competitor/Agent Name">
-      </div>
+                <div id="reason-container" class="hidden">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Reason <span class="text-red-500">*</span></label>
+                    <select id="reason" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        <option value="" disabled selected>Select Reason</option>
+                        <option value="Non Action License">Non Action License</option>
+                        <option value="Client's Request">Client's Request</option>
+                    </select>
+                </div>
 
-      <div class="field-group hidden" id="remarks-container">
-        <label class="field-label">Transfer Reason <span style="color: red;">*</span></label>
-        <textarea id="remarks" name="remarks" rows="4" placeholder="Enter remarks" class="form-control"></textarea>
-      </div>
+                <div id="agent-container" class="hidden">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Competitor / Agent Name</label>
+                    <input type="text" id="agent_name" placeholder="Enter name" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                </div>
 
-      <div class="field-group hidden" id="upload-container">
-        <label class="field-label">
-          Upload TLZ NOC document <span style="color: red;">*</span>
-          <span title="Drag and drop your file here." style="cursor: help; color: #9ca3af; margin-left: 4px;">&#9432;</span>
-        </label>
-        <input type="file" id="tlz-noc-document" name="tlz-noc-document" accept=".pdf,.jpg,.jpeg,.png">
-      </div>
+                <div id="remarks-container" class="hidden">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Transfer Reason <span class="text-red-500">*</span></label>
+                    <textarea id="remarks" rows="3" placeholder="Enter remarks" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"></textarea>
+                </div>
 
-      <div class="button-container hidden" id="submit-container">
-        <button type="button" id="submit_btn" class="submit-button">Submit</button>
-      </div>
+                <div id="upload-container" class="hidden">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Upload TLZ NOC document <span class="text-red-500">*</span></label>
+                    <div class="flex items-center justify-center w-full">
+                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg class="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                <p class="text-xs text-gray-500">PDF, JPG, PNG (Max 20MB)</p>
+                            </div>
+                            <input type="file" id="tlz-noc-document" class="hidden" accept=".pdf,.jpg,.jpeg,.png" />
+                        </label>
+                    </div>
+                    <p id="file-name-display" class="mt-2 text-xs text-indigo-600 font-medium"></p>
+                </div>
 
+                <div id="submit-container" class="mt-6 pt-4 border-t hidden">
+                    <button type="button" id="submit_btn" class="w-full flex items-center justify-center py-2.5 bg-indigo-600 text-white font-bold rounded-lg shadow hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 transition-all disabled:opacity-50">
+                        <svg id="loading-spinner" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span id="button-text">Confirm Transfer</span>
+                    </button>
+                </div>
+
+            </div>
+        </form>
     </div>
-  </div>
 
-  <div id="upload-buffer" class="upload-overlay hidden" aria-live="polite" role="status">
-    <div class="upload-box">
-      <div class="upload-icon">&#128228;</div>
-      <div class="upload-title">Processing your file...</div>
-      <div class="progress-wrapper">
-        <div class="progress-bar-background">
-          <div id="upload-progress" class="progress-bar-fill animate"></div>
+    <div id="notification-modal" class="fixed inset-0 bg-gray-900 bg-opacity-70 hidden z-50 flex items-center justify-center p-4 transition-opacity duration-300 opacity-0" aria-modal="true" role="dialog">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-sm transform scale-95 transition-transform duration-300">
+            <h3 id="modal-title" class="text-xl font-bold mb-3 text-gray-800"></h3>
+            <p id="modal-message" class="text-gray-600 mb-6"></p>
+            <button id="modal-close-btn" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-150 font-medium">
+                OK, Got It
+            </button>
         </div>
-      </div>
     </div>
-  </div>
 
-  <script src="js/app.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
