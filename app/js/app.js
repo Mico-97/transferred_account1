@@ -51,8 +51,11 @@ function updateUI() {
     } else if (type === "Transferred to Competitor") {
         containers.agent.classList.remove('hidden');
         if (agent !== "") {
+            containers.remarks.classList.remove('hidden');
             containers.upload.classList.remove('hidden');
-            if (cachedFile !== null) containers.submit.classList.remove('hidden');
+            if (rems !== "" && cachedFile !== null) {
+                containers.submit.classList.remove('hidden');
+            }
         }
     } else if (type && type.includes("Warning")) {
         containers.submit.classList.remove('hidden');
