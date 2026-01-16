@@ -185,3 +185,9 @@ input[type="file"]::file-selector-button {
     from { width: 0%; }
     to { width: 100%; }
 }
+
+
+.drop-active {
+    border-color: #4f46e5 !important;
+    background-color: #eef2ff !important;
+}

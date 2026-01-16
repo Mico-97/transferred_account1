@@ -95,6 +95,34 @@ ZOHO.embeddedApp.init().then(() => {
 
     document.getElementById('tlz-noc-document').addEventListener('change', handleFile);
 
+    // DRAG & DROP SETUP 
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('tlz-noc-document');
+
+    ['dragenter', 'dragover'].forEach(event => {
+        dropZone.addEventListener(event, e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('drop-active');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(event => {
+        dropZone.addEventListener(event, e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('drop-active');
+        });
+    });
+
+    dropZone.addEventListener('drop', e => {
+        const file = e.dataTransfer.files[0];
+        if (!file) return;
+
+        fileInput.files = e.dataTransfer.files;
+        handleFile({ target: fileInput });
+    });
+
     document.getElementById('submit_btn').addEventListener('click', async function() {
         const btnText = document.getElementById('button-text');
         const spinner = document.getElementById('loading-spinner');
